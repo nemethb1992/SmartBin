@@ -1,0 +1,2 @@
+# SmartBin
+Intelligens érintésmentes szemetes telítettségfigyeléssel
