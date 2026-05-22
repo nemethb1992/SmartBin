@@ -16,7 +16,7 @@ A rendszer:
 - figyeli a szemetes telítettségét,
 - LED-es visszajelzést ad telítettség esetén.
 
-SmartBin_Components.png
+![Komponensek](SmartBin_Components.png)
 ---
 
 ## Projekt célja
@@ -94,15 +94,6 @@ Figyelmeztetés
 
 ---
 
-## Kapcsolási rajz
-
-Ide kerül a Tinkercad kapcsolási rajz képernyőképe:
-
-
-
-*(A képfájlt majd töltsd fel a repository-ba.)*
-
----
 
 ## Bekötések
 
@@ -159,41 +150,87 @@ A program fő funkciói:
 
 ---
 
-## Távolságmérés
+## Forráskód
 
 ```cpp
-float measureDistance(int trigPin, int echoPin)
-```
+#include <Servo.h>
 
-Feladata:
+Servo lidServo;
 
-- ultrahangos szenzor indítása
-- visszaverődési idő mérése
-- távolság számítása
+// Szenzor 1 (kéz)
+const int trigPin1 = 9;
+const int echoPin1 = 10;
 
----
+// Szenzor 2 (telítettség)
+const int trigPin2 = 7;
+const int echoPin2 = 8;
 
-## Szervó vezérlése
+// LED-ek
+const int redLED = 2;
+const int greenLED = 3;
 
-Nyitás:
+// Szervó
+const int servoPin = 6;
 
-```cpp
-lidServo.write(90);
-```
+bool lidOpen = false;
+unsigned long lastDetected = 0;
+const int openTime = 3000; // ms
 
-Zárás:
+void setup() {
 
-```cpp
-lidServo.write(0);
-```
+  pinMode(trigPin1, OUTPUT);
+  pinMode(echoPin1, INPUT);
 
----
+  pinMode(trigPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
 
-## Telítettségfigyelés
+  pinMode(redLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
 
-Ha a szemetes megtelt:
+  Serial.begin(9600);
 
-```cpp
+  lidServo.attach(servoPin);
+  lidServo.write(0); // zárt
+
+  digitalWrite(redLED, HIGH);
+}
+
+
+float measureDistance(int trigPin, int echoPin){
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(trigPin, LOW);
+
+  long duration =
+    pulseIn(echoPin, HIGH);
+
+  float distance =
+    duration * 0.034 / 2;
+
+  return distance;
+}
+
+
+void loop() {
+
+  float handDistance =
+    measureDistance(trigPin1,
+                    echoPin1);
+
+  float fillDistance =
+    measureDistance(trigPin2,
+                    echoPin2);
+
+
+bool full = false;
+
+
+// TELE VAN?
 if(fillDistance < 15){
 
     full = true;
@@ -211,33 +248,45 @@ else{
 
     full = false;
 }
+
+
+  // KÉZ ÉRZÉKELÉS
+if(handDistance < 15 &&
+   !full){
+
+    lidServo.write(90);
+
+    digitalWrite(
+        greenLED,HIGH);
+
+    digitalWrite(
+        redLED,LOW);
+
+    lidOpen=true;
+
+    lastDetected=
+      millis();
+}
+
+
+  // AUTOMATA ZÁRÁS
+  if(lidOpen &&
+     millis()-lastDetected >
+     openTime){
+
+      lidServo.write(0);
+
+      digitalWrite(
+        greenLED,LOW);
+
+      digitalWrite(
+        redLED,HIGH);
+
+      lidOpen=false;
+  }
+
+
+  delay(100);
+}
 ```
 
-A piros LED villogással figyelmeztet.
-
----
-
-
-# Továbbfejlesztési lehetőségek
-
-A projekt tovább bővíthető:
-
-- LCD kijelző
-- hangjelzés (buzzer)
-- mobil értesítés
-- WiFi kapcsolat
-- IoT integráció
-- telítettség százalékos kijelzés
-
----
-
-# Összegzés
-
-A projekt során sikerült egy Arduino alapú intelligens szemetes prototípust létrehozni, amely automatikus nyitást és telítettségfigyelést valósít meg.
-
-A rendszer bemutatja:
-
-- ultrahangos szenzorok használatát,
-- szervómotor vezérlését,
-- LED visszacsatolást,
-- automatizált állapotkezelést.
