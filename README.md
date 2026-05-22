@@ -29,6 +29,8 @@ A projekt célja egy olyan rendszer létrehozása, amely:
 - LED-es figyelmeztetést ad  
 - csökkenti a fizikai érintkezést  
 
+Tinkercad link: https://www.tinkercad.com/things/9E2ECXa2ZJD-editing-components/editel?lessonid=EFU6PEHIXGFUR1J&projectid=OGK4Q7VL20FZRV9&returnTo=https:%2F%2Fwww.tinkercad.com%2Fdashboard%2Ftutorials&sharecode=33wKBQORJ_f3qPf6_qHhf1jGNhGzGu9M3pvga_X8ZDo
+
 ---
 
 ## Felhasznált alkatrészek
