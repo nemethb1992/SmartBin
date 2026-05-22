@@ -16,6 +16,7 @@ A rendszer:
 - figyeli a szemetes telítettségét,
 - LED-es visszajelzést ad telítettség esetén.
 
+SmartBin_Components.png
 ---
 
 ## Projekt célja
